@@ -22,9 +22,13 @@ public class Item {
     private ItemStatus status;
 
     private Double shippingPrice;
+    private Double expeditedShippingPrice;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "owner_id")
+    private User owner;
+    @ManyToOne
+    @JoinColumn(name = "bidder_id")
     private User highestBidder;
 
     public Long getId() {
@@ -99,11 +103,27 @@ public class Item {
         this.highestBidder = highestBidder;
     }
 
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
     public Double getShippingPrice() {
         return shippingPrice;
     }
 
     public void setShippingPrice(Double shippingPrice) {
         this.shippingPrice = shippingPrice;
+    }
+
+    public Double getExpeditedShippingPrice() {
+        return expeditedShippingPrice;
+    }
+
+    public void setExpeditedShippingPrice(Double expeditedShippingPrice) {
+        this.expeditedShippingPrice = expeditedShippingPrice;
     }
 }
