@@ -16,6 +16,7 @@ public class Item {
     @Enumerated(EnumType.STRING)
     private AuctionType auctionType;
     private Timestamp duration;
+    private Timestamp arrival;
     private Double startingPrice;
     private Double currentPrice;
     @Enumerated(EnumType.STRING)
@@ -125,5 +126,13 @@ public class Item {
 
     public void setExpeditedShippingPrice(Double expeditedShippingPrice) {
         this.expeditedShippingPrice = expeditedShippingPrice;
+    }
+
+    public Timestamp getArrival() {
+        return arrival;
+    }
+
+    public void setArrival() {
+        this.arrival = arrival;
     }
 }
