@@ -20,7 +20,7 @@ public class SQLiteConfig {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
 //        dataSource.setDriverClassName(driverName);
         dataSource.setDriverClassName("org.sqlite.JDBC");
-        dataSource.setUrl("jdbc:sqlite:C:\\Users\\harja\\auction-service\\src\\main\\resources\\db.sqlite3");
+        dataSource.setUrl("jdbc:sqlite::resource:db.sqlite3");
 //        dataSource.setUrl(databaseUrl);
         return dataSource;
     }
