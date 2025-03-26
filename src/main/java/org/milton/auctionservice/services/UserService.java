@@ -27,6 +27,14 @@ public class UserService {
         return user != null && user.getPassword().equals(password);
     }
 
+    public void resetPassword(String username, String newPassword) {
+        User user = getUserByUsername(username);
+        if (user != null) {
+            user.setPassword(newPassword);
+        }
+        userRepository.save(user);
+    }
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }

@@ -36,6 +36,12 @@ public class UserController {
         }
     }
 
+    @PostMapping("/resetpass")
+    public ResponseEntity<String> resetPassword(@RequestBody User user) {
+        userService.resetPassword(user.getUsername(), user.getPassword());
+        return ResponseEntity.ok("Reset password successfully.");
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
