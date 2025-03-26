@@ -36,6 +36,7 @@ public class ItemService {
             item.setName(itemDetails.getName());
             item.setDescription(itemDetails.getDescription());
             item.setStartingPrice(itemDetails.getStartingPrice());
+            item.setCurrentPrice(itemDetails.getCurrentPrice());
             return itemRepository.save(item);
         }).orElseThrow(() -> new ResourceNotFoundException("Item not found with id " + id));
     }
