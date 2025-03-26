@@ -1,16 +1,16 @@
 package org.milton.auctionservice.request;
 
 public class PaymentRequest {
-    private Long coustomerId;
+    private Long customerId;
     private Long itemId;
     private Boolean isShipping;
 
-    public Long getCoustomerId() {
-        return coustomerId;
+    public Long getCustomerId() {
+        return customerId;
     }
 
-    public void setCoustomerId(Long coustomerId) {
-        this.coustomerId = coustomerId;
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     public Long getItemId() {

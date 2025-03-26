@@ -57,7 +57,7 @@ public class MainService {
     }
 
     public AuctionOrder createOrder(PaymentRequest paymentRequest) {
-        User user = userService.getUserById(paymentRequest.getCoustomerId()).get();
+        User user = userService.getUserById(paymentRequest.getCustomerId()).get();
         Item item = itemService.getItemById(paymentRequest.getItemId()).get();
         AuctionOrder order = new AuctionOrder();
         order.setBuyer(user);
@@ -68,6 +68,8 @@ public class MainService {
         else{
             order.setTotalPrice(item.getCurrentPrice());
         }
+
+        System.out.println(order);
 
         return orderRepository.save(order);
     }
