@@ -1,59 +1,52 @@
-package org.milton.auctionservice.dialect;
+package org.milton.auctionservice.config;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.identity.IdentityColumnSupport;
-import org.hibernate.dialect.identity.NoIdentityColumnSupport;
-import org.hibernate.type.StandardBasicTypes;
-import java.sql.Types;
+import javax.sql.DataSource;
+import java.util.Properties;
 
-public class SQLiteDialect extends Dialect {
+@Configuration
+public class SQLiteConfig {
 
-    public SQLiteDialect() {
-        super();
-        regis
-        // Register SQLite specific types
-        registerColumnType(Types.INTEGER, "integer");
-        registerColumnType(Types.VARCHAR, "text");
-        registerColumnType(Types.TIMESTAMP, "datetime");
+    @Bean
+    public DataSource dataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//        dataSource.setDriverClassName(driverName);
+        dataSource.setDriverClassName("org.sqlite.JDBC");
+        dataSource.setUrl("jdbc:sqlite:C:\\Users\\harja\\auction-service\\src\\main\\resources\\db.sqlite3");
+//        dataSource.setUrl(databaseUrl);
+        return dataSource;
     }
 
-    @Override
-    public IdentityColumnSupport getIdentityColumnSupport() {
-        return new NoIdentityColumnSupport();
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(dataSource());
+        em.setPackagesToScan("org.milton.auctionservice.models");
+
+        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        em.setJpaVendorAdapter(vendorAdapter);
+
+        Properties properties = new Properties();
+        properties.setProperty("hibernate.dialect", "org.hibernate.community.dialect.SQLiteDialect");
+        properties.setProperty("hibernate.hbm2ddl.auto", "update");
+        properties.setProperty("hibernate.show_sql", "true");
+        em.setJpaProperties(properties);
+
+        return em;
     }
 
-    @Override
-    public boolean supportsIdentityColumns() {
-        return true;
-    }
-
-    @Override
-    public boolean hasDataTypeInIdentityColumn() {
-        return false;
-    }
-
-    @Override
-    public boolean supportsInsertSelectIdentity() {
-        return false;
-    }
-
-    @Override
-    public boolean supportsCommentOn() {
-        return false;
-    }
-
-    @Override
-    public boolean supportsLobValueChange() {
-        return false;
-    }
-
-    @Override
-    public String getIdentitySelectString(String table, String column, int type) {
-        throw new UnsupportedOperationException("SQLite does not support identity select string");
-    }
-
-    @Override
-    public String getIdentityColumnString(int type) {
-        return "integer primary key autoincrement";
+    @Bean
+    public PlatformTransactionManager transactionManager() {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+        return transactionManager;
     }
 }
