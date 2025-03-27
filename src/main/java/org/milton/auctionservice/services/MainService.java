@@ -63,10 +63,10 @@ public class MainService {
         order.setBuyer(user);
         order.setItem(item);
         if(paymentRequest.getShipping()){
-            order.setTotalPrice(item.getCurrentPrice() + item.getShippingPrice());
+            order.setTotalPrice(item.getCurrentPrice() + item.getShippingPrice() + item.getExpeditedShippingPrice());
         }
         else{
-            order.setTotalPrice(item.getCurrentPrice());
+            order.setTotalPrice(item.getCurrentPrice() + item.getShippingPrice());
         }
 
         System.out.println(order);
