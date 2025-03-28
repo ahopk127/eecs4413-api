@@ -1,58 +1,41 @@
-Auction Service
+# Auction Service (Backend)
 
-	A Spring Boot-based auction platform where users can list items, place bids, and manage transactions.
+A Spring Boot-based auction platform where users can list items, place bids, and manage transactions.
 
-Installation Instructions
+This application works with the frontend at [ahopk127/eecs4413-ui](https://github.com/ahopk127/eecs4413-ui/).
 
-	Prerequisites:
+## Installation Instructions
 
--Java 17+
+Prerequisites:
 
--Maven 3+
+1. Java 17+
+1. Maven 3+
+1. Eclipse IDE (optional; for importing the project)
+1. Postman (for API testing)
+1. SQLite or MySQL
 
--Eclipse IDE (for importing the project)
+### Steps to Install the Application with Eclipse
 
--Postman (for API testing)
+1. Import the project into Eclipse
+1. Open Eclipse IDE.
+1. Click File > Import > Existing Maven Projects.
+1. Browse and select the auction-service project folder.
+1. Click Finish to import the project.
 
--SQLite or MySQL
+### Steps to Run the Application with Eclipse
 
-	Steps to Run the Server:
+1. Navigate to src/main/java/org/milton/auctionservice/.
+1. Locate AuctionServiceApplication.java.
+1. Right-click the file and select Run As > Java Application.
+1. The server should now be running at http://localhost:8085
 
--Import the Project into Eclipse:
+### Steps to Run the Application on the Commandline
 
--Open Eclipse IDE.
+1. Navigate to the root directory.
+1. Run `./mvnw spring-boot:run`.
+1. The server should now be running at http://localhost:8085
 
--Click File > Import > Existing Maven Projects.
-
--Browse and select the auction-service project folder.
-
--Click Finish to import the project.
-
-	Modify Database Configuration:
-
--Navigate to src/main/java/org/milton/auctionservice/config.
-
--Open SQLiteConfig.java.
-
--Locate line 23 and update the database file path:
-
--dataSource.setUrl("jdbc:sqlite:C:\\Users\\harja\\auction-service\\src\\main\\resources\\db.sqlite3");
-
--Replace C:\Users\harja\auction-service\src\main\resources\db.sqlite3 with your actual file path for db.sqlite3 located in src/main/resources.
-
-	Run the Application:
-
--Navigate to src/main/java/org/milton/auctionservice/.
-
--Locate AuctionServiceApplication.java.
-
--Right-click the file and select Run As > Java Application.
-
-	The server should now be running at:
-
-http://localhost:8085
-
-Test API Endpoints in Postman:
+## Test API Endpoints in Postman
 
 Open Postman.
 
@@ -60,6 +43,7 @@ Use the provided Postman collection (attached in the submission) to test API end
 
 Example request:
 
+```
 POST http://localhost:8085/api/items
 
 {
@@ -71,5 +55,6 @@ POST http://localhost:8085/api/items
     "currentPrice": 0,
     "status": "AVAILABLE"
 }
+```
 
 Ensure responses are successful.
