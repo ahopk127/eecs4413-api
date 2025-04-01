@@ -5,6 +5,8 @@ import org.milton.auctionservice.models.User;
 import org.milton.auctionservice.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -18,21 +20,25 @@ public class UserService {
     }
 
     public void registerUser(User user) {
+        String plainTextPassword = user.getPassword();
+        String bcryptHash = BCrypt.hashpw(plainTextPassword, BCrypt.gensalt());
+        user.setPassword(bcryptHash);
         userRepository.save(user);
     }
 
     public boolean authenticateUser(String username, String password) {
         // Find the user by username
         User user = getUserByUsername(username);
-        return user != null && user.getPassword().equals(password);
+        return user != null && BCrypt.checkpw(password, user.getPassword());
     }
 
     public void resetPassword(String username, String newPassword) {
         User user = getUserByUsername(username);
         if (user != null) {
-            user.setPassword(newPassword);
+            String bcryptHash = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+            user.setPassword(bcryptHash);
+            userRepository.save(user);
         }
-        userRepository.save(user);
     }
 
     public List<User> getAllUsers() {
