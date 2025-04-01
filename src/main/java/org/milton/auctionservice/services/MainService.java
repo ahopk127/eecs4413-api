@@ -25,6 +25,10 @@ public class MainService {
     }
 
     public Item createBid(BiddingRequest request) {
+    	
+    	if (request.getBidAmount() <= 0) {
+            throw new IllegalArgumentException("Bid amount must be greater than zero.");
+        }
         Item item = itemService.getItemById(request.getItemId()).get();
         User user = userService.getUserById(request.getUserId()).get();
         Timestamp currentTime = new Timestamp(System.currentTimeMillis());
@@ -35,6 +39,7 @@ public class MainService {
             biddingRepository.save(getBiddingObject(user,item,item.getStartingPrice()));
             return itemService.updateItem(item.getId(), item);
         }
+
         else if(item.getStatus().equals(ItemStatus.AVAILABLE) && item.getAuctionType().equals(AuctionType.FORWARD) && item.getCurrentPrice() < request.getBidAmount() &&
                     item.getStartingPrice() < request.getBidAmount() &&
                     item.getDuration().compareTo(currentTime) > 0) {
@@ -46,6 +51,8 @@ public class MainService {
         }
 
         return item;
+        
+        
     }
 
     private Bidding getBiddingObject(User user,Item item, Double bidAmount){
@@ -57,20 +64,29 @@ public class MainService {
     }
 
     public AuctionOrder createOrder(PaymentRequest paymentRequest) {
-        User user = userService.getUserById(paymentRequest.getCustomerId()).get();
-        Item item = itemService.getItemById(paymentRequest.getItemId()).get();
+        User user = userService.getUserById(paymentRequest.getCustomerId())
+            .orElseThrow(() -> new IllegalArgumentException("Invalid customer ID"));
+        Item item = itemService.getItemById(paymentRequest.getItemId())
+            .orElseThrow(() -> new IllegalArgumentException("Invalid item ID"));
+
         AuctionOrder order = new AuctionOrder();
         order.setBuyer(user);
         order.setItem(item);
-        if(paymentRequest.getShipping()){
-            order.setTotalPrice(item.getCurrentPrice() + item.getShippingPrice() + item.getExpeditedShippingPrice());
-        }
-        else{
-            order.setTotalPrice(item.getCurrentPrice() + item.getShippingPrice());
-        }
 
-        System.out.println(order);
+        // Handle nulls safely by defaulting to 0.0
+        double currentPrice = item.getCurrentPrice() != null ? item.getCurrentPrice() : 0.0;
+        double shippingPrice = item.getShippingPrice() != null ? item.getShippingPrice() : 0.0;
+        double expeditedPrice = item.getExpeditedShippingPrice() != null ? item.getExpeditedShippingPrice() : 0.0;
+
+        if (paymentRequest.getShipping()) {
+            order.setTotalPrice(currentPrice + shippingPrice + expeditedPrice);
+        } else {
+            order.setTotalPrice(currentPrice + shippingPrice);
+        }
+        
+        
 
         return orderRepository.save(order);
     }
+
 }
