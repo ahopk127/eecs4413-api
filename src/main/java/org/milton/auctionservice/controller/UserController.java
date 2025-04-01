@@ -5,7 +5,21 @@ import org.milton.auctionservice.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -14,6 +28,22 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    
+    static {
+    	KeyPairGenerator generator;
+		try {
+			generator = KeyPairGenerator.getInstance("RSA");
+		} catch (NoSuchAlgorithmException e) {
+			throw new AssertionError("Could not access specified algorithm.", e);
+		}
+        generator.initialize(4096);
+        KeyPair pair = generator.generateKeyPair();
+        privateKey = (RSAPrivateKey) pair.getPrivate();
+        publicKey = (RSAPublicKey) pair.getPublic();
+    }
+    
+    private static final RSAPublicKey publicKey;
+    private static final RSAPrivateKey privateKey;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -26,14 +56,34 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> loginUser(@RequestBody User user) {
+    public ResponseEntity<String> loginUser(@RequestBody User user) {
         boolean isAuthenticated = userService.authenticateUser(user.getUsername(), user.getPassword());
         if (isAuthenticated) {
-            User authUser = userService.getUserByUsername(user.getUsername());
-            return ResponseEntity.ok(authUser);
+            return ResponseEntity.ok(tokenForUser(user.getUsername()));
         } else {
             return ResponseEntity.status(401).body(null);
         }
+    }
+    
+    public String tokenForUser(String username) {
+    	Algorithm algorithm = Algorithm.RSA256(publicKey, privateKey);
+    	String token = JWT.create()
+    			.withIssuer("auth0")
+    			.withPayload(Map.of("username", username))
+    			.sign(algorithm);
+    	return token;
+    }
+
+    @PostMapping("/userfromtoken")
+    public ResponseEntity<User> userFromToken(@RequestBody String token) {
+    	Algorithm algorithm = Algorithm.RSA256(publicKey, privateKey);
+    	JWTVerifier verifier = JWT.require(algorithm)
+    			.withIssuer("auth0")
+    			.build();
+
+    	DecodedJWT decodedJWT = verifier.verify(token);
+    	String username = decodedJWT.getClaim("username").asString();
+    	return ResponseEntity.ok(userService.getUserByUsername(username));
     }
 
     @PostMapping("/resetpass")
