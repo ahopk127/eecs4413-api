@@ -67,7 +67,7 @@ public class UserController {
         if (isAuthenticated) {
             return ResponseEntity.ok(tokenForUser(user.getUsername()));
         } else {
-            return ResponseEntity.status(401).body(null);
+            return ResponseEntity.status(401).body("Login failed - incorrect username or password.");
         }
     }
     
