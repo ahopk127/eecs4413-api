@@ -58,3 +58,28 @@ POST http://localhost:8085/api/items
 ```
 
 Ensure responses are successful.
+
+## API Endpoints List
+
+### Items
+
+- `GET /api/items/` - Returns an array of all items' data.
+- `POST /api/items/` - Creates a new item from JSON provided in the POST data, returning the item's database entry.
+- `GET /api/items/<id>` - Gets data about the item with id `id`.
+- `PUT /api/items/<id>` - Updates the item with id `id`, using JSON provided in the PUT data.
+- `DELETE /api/items/<id>` - Deletes the item with id `id`.
+
+### Miscellaneous
+
+- `POST /api/main/bid` - Bids on an item.  JSON data should include the parameters `itemId`, `userId` and `bidAmount`.
+- `POST /api/main/pay_now` - Pays for an item.  JSON data should include the parameters `customerId`, `itemId` and `shipping` (a boolean that is true iff expedided shipping was used).
+
+### Users
+
+- `GET /api/users/all` - Returns an array of all users' data.
+- `POST /api/users/login` - Accepts a `username` and a `password`.  If they match that of an existing user, returns a token that can be stored in the browser.  If not, returns a status 401.
+- `POST /api/users/register` - Accepts user data and creates a new user account.
+- `POST /api/users/resetpass` - Accepts a `username` and a `password`.  Changes the associated user's password.
+- `POST /api/users/userfromtoken` - Accepts a token returned by `/api/users/login` (don't give it a parameter name, just pass it as a string), and returns the associated user's data.
+- `GET /api/users/<id>` - Gets the data of the user with id `id`.
+
